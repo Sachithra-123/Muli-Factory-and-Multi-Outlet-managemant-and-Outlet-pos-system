@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login — DSI FMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <style>
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .login-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 25px 45px rgba(0,0,0,0.3); }
+        .brand-logo { width: 70px; height: 70px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+        .login-title { color: #fff; font-weight: 700; font-size: 1.6rem; text-align: center; }
+        .login-sub { color: rgba(255,255,255,0.5); text-align: center; font-size: 0.9rem; margin-bottom: 2rem; }
+        .form-label { color: rgba(255,255,255,0.8); font-size: 0.85rem; font-weight: 500; }
+        .form-control { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; padding: 0.75rem 1rem; }
+        .form-control:focus { background: rgba(255,255,255,0.12); border-color: #f59e0b; box-shadow: 0 0 0 0.2rem rgba(245,158,11,0.2); color: #fff; }
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
+        .btn-login { background: linear-gradient(135deg, #f59e0b, #ef4444); border: none; border-radius: 10px; color: #fff; font-weight: 600; padding: 0.75rem; width: 100%; font-size: 1rem; transition: opacity 0.2s; }
+        .btn-login:hover { opacity: 0.9; color: #fff; }
+        .alert-error { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; border-radius: 10px; padding: 0.75rem 1rem; }
+        .alert-success { background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.4); color: #86efac; border-radius: 10px; padding: 0.75rem 1rem; }
+        .demo-creds { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.75rem 1rem; margin-top: 1.5rem; }
+        .demo-creds p { color: rgba(255,255,255,0.6); font-size: 0.8rem; margin: 0; }
+        .input-group-text { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="brand-logo">
+        <i class="bi bi-building-gear text-white fs-2"></i>
+    </div>
+    <h1 class="login-title">DSI FMS</h1>
+    <p class="login-sub">Factory & Outlet Management System</p>
+
+    <div th:if="${param.error}" class="alert-error mb-3">
+        <i class="bi bi-exclamation-circle me-2"></i>Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="alert-success mb-3">
+        <i class="bi bi-check-circle me-2"></i>You have been logged out successfully.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" id="username" name="username" class="form-control"
+                       placeholder="Enter username" required autofocus/>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" id="password" name="password" class="form-control"
+                       placeholder="Enter password" required/>
+            </div>
+        </div>
+        <button type="submit" class="btn-login">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </button>
+    </form>
+
+    <div class="demo-creds">
+        <p><i class="bi bi-info-circle me-1"></i><strong class="text-warning">Admin:</strong> admin / admin123</p>
+        <p class="mt-1"><i class="bi bi-info-circle me-1"></i><strong class="text-info">Cashier:</strong> cashier1 / cashier123</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

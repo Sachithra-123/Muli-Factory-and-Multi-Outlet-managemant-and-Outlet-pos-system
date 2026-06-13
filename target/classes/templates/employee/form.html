@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${pageTitle} + ' — DSI FMS'">Employee Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="main-content">
+        <div th:replace="~{fragments/sidebar :: navbar}"></div>
+        <div class="content-area">
+            <div class="page-header">
+                <h2 class="page-title"><i class="bi bi-person me-2 text-warning"></i><span th:text="${pageTitle}">Employee</span></h2>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card-box">
+                        <form th:if="${employee.id == null}" th:action="@{/employees/save}" th:object="${employee}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{name}" class="form-control" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">NIC Number</label>
+                                    <input type="text" th:field="*{nic}" class="form-control" placeholder="e.g. 199012345678"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Phone</label>
+                                    <input type="text" th:field="*{phone}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    <input type="email" th:field="*{email}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Position <span class="text-danger">*</span></label>
+                                    <select th:field="*{position}" id="addPosition" class="form-select" required>
+                                        <option value="">-- Select --</option>
+                                        <option value="Manager">Manager</option>
+                                        <option value="Cashier">Cashier</option>
+                                        <option value="Supervisor">Supervisor</option>
+                                        <option value="Worker">Worker</option>
+                                        <option value="Technician">Technician</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Department</label>
+                                    <select th:field="*{department}" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        <option value="Production">Production</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Warehouse">Warehouse</option>
+                                        <option value="HR">HR</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Management">Management</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Assigned Factory</label>
+                                    <select th:field="*{factory.id}" class="form-select">
+                                        <option value="">-- Unassigned / Head Office --</option>
+                                        <option th:each="f : ${factories}" th:value="${f.id}" th:text="${f.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Monthly Salary (LKR) <span class="text-danger">*</span></label>
+                                    <input type="number" th:field="*{salary}" class="form-control" step="0.01" min="0" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Hire Date</label>
+                                    <input type="date" th:field="*{hireDate}" class="form-control"/>
+                                </div>
+
+                                <!-- POS Credentials Card -->
+                                <div id="addPosCredentialsSection" class="col-12 mt-3" style="display: none;">
+                                    <div style="border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; background: #fffdf5; border-color: #ffeeba;">
+                                        <h5 class="fw-bold mb-3 text-warning-emphasis"><i class="bi bi-shield-lock me-2 text-warning"></i>POS Login Credentials (Only for Cashier)</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px; border: 1.5px solid var(--border); border-right: none;"><i class="bi bi-person text-muted"></i></span>
+                                                    <input type="text" th:field="*{username}" id="addUsernameInput" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" placeholder="Choose unique username"/>
+                                                </div>
+                                                <div class="form-text">Used for cashier login.</div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px; border: 1.5px solid var(--border); border-right: none;"><i class="bi bi-key text-muted"></i></span>
+                                                    <input type="password" th:field="*{password}" id="addPasswordInput" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" placeholder="Enter secure password"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-save me-1"></i>Save Employee</button>
+                                <a th:href="@{/employees}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+
+                        <form th:if="${employee.id != null}" th:action="@{/employees/update/{id}(id=${employee.id})}" th:object="${employee}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{name}" class="form-control" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">NIC Number</label>
+                                    <input type="text" th:field="*{nic}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Phone</label>
+                                    <input type="text" th:field="*{phone}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Email</label>
+                                    <input type="email" th:field="*{email}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Position <span class="text-danger">*</span></label>
+                                    <select th:field="*{position}" id="editPosition" class="form-select" required>
+                                        <option value="">-- Select --</option>
+                                        <option value="Manager">Manager</option>
+                                        <option value="Cashier">Cashier</option>
+                                        <option value="Supervisor">Supervisor</option>
+                                        <option value="Worker">Worker</option>
+                                        <option value="Technician">Technician</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Department</label>
+                                    <select th:field="*{department}" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        <option value="Production">Production</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="Warehouse">Warehouse</option>
+                                        <option value="HR">HR</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Management">Management</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Assigned Factory</label>
+                                    <select th:field="*{factory.id}" class="form-select">
+                                        <option value="">-- Unassigned / Head Office --</option>
+                                        <option th:each="f : ${factories}" th:value="${f.id}" th:text="${f.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Salary (LKR) <span class="text-danger">*</span></label>
+                                    <input type="number" th:field="*{salary}" class="form-control" step="0.01" min="0" required/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Hire Date</label>
+                                    <input type="date" th:field="*{hireDate}" class="form-control"/>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Status</label>
+                                    <select th:field="*{status}" class="form-select">
+                                        <option value="ACTIVE">Active</option>
+                                        <option value="INACTIVE">Inactive</option>
+                                    </select>
+                                </div>
+
+                                <!-- POS Credentials Card -->
+                                <div id="editPosCredentialsSection" class="col-12 mt-3" style="display: none;">
+                                    <div style="border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; background: #fffdf5; border-color: #ffeeba;">
+                                        <h5 class="fw-bold mb-3 text-warning-emphasis"><i class="bi bi-shield-lock me-2 text-warning"></i>POS Login Credentials (Only for Cashier)</h5>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px; border: 1.5px solid var(--border); border-right: none;"><i class="bi bi-person text-muted"></i></span>
+                                                    <input type="text" th:field="*{username}" id="editUsernameInput" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" placeholder="Choose unique username"/>
+                                                </div>
+                                                <div class="form-text">Used for cashier login.</div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-semibold">Password</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white border-end-0" style="border-radius: 10px 0 0 10px; border: 1.5px solid var(--border); border-right: none;"><i class="bi bi-key text-muted"></i></span>
+                                                    <input type="password" th:field="*{password}" id="editPasswordInput" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" placeholder="Leave blank to keep current password"/>
+                                                </div>
+                                                <div class="form-text text-muted">Only fill this if you want to update the password.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-save me-1"></i>Update Employee</button>
+                                <a th:href="@{/employees}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const addPosition = document.getElementById("addPosition");
+        const addSection = document.getElementById("addPosCredentialsSection");
+        const addUsername = document.getElementById("addUsernameInput");
+        const addPassword = document.getElementById("addPasswordInput");
+
+        if (addPosition) {
+            function toggleAdd() {
+                const val = addPosition.value.trim().toLowerCase();
+                // Support common variations or typos like "chashier"
+                const isCashier = val === "cashier" || val === "chashier" || val.includes("cashier");
+                if (isCashier) {
+                    addSection.style.display = "block";
+                    addUsername.setAttribute("required", "required");
+                    addPassword.setAttribute("required", "required");
+                } else {
+                    addSection.style.display = "none";
+                    addUsername.removeAttribute("required");
+                    addPassword.removeAttribute("required");
+                }
+            }
+            addPosition.addEventListener("input", toggleAdd);
+            toggleAdd(); // initial check
+        }
+
+        const editPosition = document.getElementById("editPosition");
+        const editSection = document.getElementById("editPosCredentialsSection");
+        const editUsername = document.getElementById("editUsernameInput");
+        const editPassword = document.getElementById("editPasswordInput");
+
+        if (editPosition) {
+            function toggleEdit() {
+                const val = editPosition.value.trim().toLowerCase();
+                // Support common variations or typos like "chashier"
+                const isCashier = val === "cashier" || val === "chashier" || val.includes("cashier");
+                if (isCashier) {
+                    editSection.style.display = "block";
+                    editUsername.setAttribute("required", "required");
+                } else {
+                    editSection.style.display = "none";
+                    editUsername.removeAttribute("required");
+                }
+            }
+            editPosition.addEventListener("input", toggleEdit);
+            toggleEdit(); // initial check
+        }
+    });
+</script>
+</body>
+</html>
